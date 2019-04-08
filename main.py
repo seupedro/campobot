@@ -76,7 +76,7 @@ def startup():
 
     msg_queue = mq.MessageQueue(all_burst_limit=28, all_time_limit_ms=1050)
     request = Request(con_pool_size=8)
-    TOKEN = open('token_db.txt', 'r').read().strip()
+    TOKEN = open('token_bot.txt', 'r').read().strip()
     campo_bot = MQBot(TOKEN, request=request, mqueue=msg_queue)
 
     updater = Updater(bot=campo_bot)
