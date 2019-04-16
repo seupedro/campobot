@@ -172,7 +172,7 @@ def startup():
                           url_path=TOKEN.split(':')[1],
                           key='cert/private.key',
                           cert='cert/cert.pem',
-                          webhook_url=str('https://35.231.210.15:8443/' + TOKEN.split(':')[1]))
+                          webhook_url=str('https://35.231.210.15:443/' + TOKEN.split(':')[1]))
     updater.idle()
 
 
