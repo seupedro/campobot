@@ -1,6 +1,5 @@
 import datetime
 import logging
-import campobot
 from venv import logger
 
 from telegram import Bot, Update, CallbackQuery
@@ -8,28 +7,28 @@ from telegram.ext import CallbackQueryHandler, CommandHandler, RegexHandler, Upd
 from telegram.utils.request import Request
 from telegram.ext import messagequeue as mq
 
-import campobot.commands
-from campobot.cronometer import cron_callback, CALLBACK_CRON_SAVE, cron_inline, CALLBACK_CRON_UPDATE, \
+from commands import start, callback_404
+from cronometer import cron_callback, CALLBACK_CRON_SAVE, cron_inline, CALLBACK_CRON_UPDATE, \
     CALLBACK_CRON_START, CALLBACK_CRON_STOP, CALLBACK_CRON_DISCARD
-from campobot.database import startup_mongodb
-from campobot.help import CALLBACK_HELP_PUBS_DEMO, help_callback, help_inline, CALLBACK_HELP_INTRO, CALLBACK_HELP_HOURS, \
+from database import startup_mongodb
+from help import CALLBACK_HELP_PUBS_DEMO, help_callback, help_inline, CALLBACK_HELP_INTRO, CALLBACK_HELP_HOURS, \
     CALLBACK_HELP_CRON, CALLBACK_HELP_PUBS, CALLBACK_HELP_VIDEOS, CALLBACK_HELP_RETURNS, CALLBACK_HELP_STUDIES, \
     CALLBACK_HELP_REPORT, CALLBACK_HELP_HOURS_DEMO, CALLBACK_HELP_CRON_DEMO, CALLBACK_HELP_VIDEOS_DEMO, \
     CALLBACK_HELP_RETURNS_DEMO, CALLBACK_HELP_STUDIES_DEMO, CALLBACK_HELP_REPORT_DEMO
-from campobot.hours import CALLBACK_HOURS_ADD_TWO_HOURS, hours_callback, hours_inline, CALLBACK_HOURS_ADD, \
+from hours import CALLBACK_HOURS_ADD_TWO_HOURS, hours_callback, hours_inline, CALLBACK_HOURS_ADD, \
     CALLBACK_HOURS_MINUTES_ADD, CALLBACK_HOURS_ADD_ONE_HOUR, CALLBACK_HOURS_REMOVE_ONE_HOUR, \
     CALLBACK_HOURS_REMOVE_TWO_HOURS, CALLBACK_HOURS_ADD_THIRTY_MINUTES, CALLBACK_HOURS_ADD_TEN_MINUTES, \
     CALLBACK_HOURS_ADD_FIVE_MINUTES, CALLBACK_HOURS_REMOVE_THIRTY_MINUTES, CALLBACK_HOURS_REMOVE_TEN_MINUTES, \
     CALLBACK_HOURS_REMOVE_FIVE_MINUTES
-from campobot.publications import pubs_inline, pubs_callback, CALLBACK_PUBS_ADD_ONE, CALLBACK_PUBS_ADD_THREE, \
+from publications import pubs_inline, pubs_callback, CALLBACK_PUBS_ADD_ONE, CALLBACK_PUBS_ADD_THREE, \
     CALLBACK_PUBS_REMOVE_ONE
-from campobot.reports import report_notification_job, reports_callback, reports_inline, CALLBACK_REPORT_LAST_MONTH, \
+from reports import report_notification_job, reports_callback, reports_inline, CALLBACK_REPORT_LAST_MONTH, \
     CALLBACK_REPORT_CURRENT_MONTH
-from campobot.returns import returns_inline, returns_callback, CALLBACK_RETURNS_ADD_ONE, CALLBACK_RETURNS_ADD_THREE, \
+from returns import returns_inline, returns_callback, CALLBACK_RETURNS_ADD_ONE, CALLBACK_RETURNS_ADD_THREE, \
     CALLBACK_RETURNS_REMOVE_ONE, CALLBACK_RETURNS_LIST, CALLBACK_RETURNS_INSTERESTED
-from campobot.studies import studies_callback, studies_inline, CALLBACK_STUDIES_ADD_ONE, CALLBACK_STUDIES_ADD_THREE, \
+from studies import studies_callback, studies_inline, CALLBACK_STUDIES_ADD_ONE, CALLBACK_STUDIES_ADD_THREE, \
     CALLBACK_STUDIES_REMOVE_ONE
-from campobot.videos import video_callback, CALLBACK_VIDEO_ADD_ONE, CALLBACK_VIDEO_ADD_THREE, CALLBACK_VIDEO_REMOVE_ONE, \
+from videos import CALLBACK_VIDEO_ADD_ONE, CALLBACK_VIDEO_ADD_THREE, CALLBACK_VIDEO_REMOVE_ONE, video_callback, \
     video_inline
 
 
@@ -163,14 +162,13 @@ def startup():
     dispatcher.add_error_handler(error)
 
     # Commands Handler
-    dispatcher.add_handler(CommandHandler('start', campobot.commands.start, pass_user_data=True))
-    dispatcher.add_handler(RegexHandler(pattern=REGEX_404, callback=campobot.commands.callback_404))
+    dispatcher.add_handler(CommandHandler('start', start, pass_user_data=True))
+    dispatcher.add_handler(RegexHandler(pattern=REGEX_404, callback=callback_404))
 
     # Start MongoDB and Bot
     startup_mongodb()
     updater.start_polling()
     updater.idle()
-    # show be shown
 
 
 if __name__ == '__main__':

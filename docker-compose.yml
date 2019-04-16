@@ -23,13 +23,13 @@ services:
       retries: 10
       start_period: 1m30s
 
-  campo:
+  campobot:
     build: ./campobot
     container_name: campobot
     image: python:3
     restart: always
     ports:
-      - "8443:8443"
+      - "443:443"
     links:
       - mongo
     depends_on:

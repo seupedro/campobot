@@ -1,7 +1,7 @@
 # Callback Constants
 from telegram import Bot, CallbackQuery, Chat, InlineKeyboardButton, InlineKeyboardMarkup, Update, User
 
-from campobot.database import get_returns_db, get_returns_list_db, save_returns_db
+from database import get_returns_db, get_returns_list_db, save_returns_db
 
 CALLBACK_RETURNS_ADD_ONE = 'returns_add_one'
 CALLBACK_RETURNS_REMOVE_ONE = 'returns_remove_one'

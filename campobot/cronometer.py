@@ -1,6 +1,6 @@
 import time
 
-from campobot.database import save_cron_db
+from database import save_cron_db
 from telegram import InlineKeyboardButton, Update, Bot, InlineKeyboardMarkup, CallbackQuery
 
 # Constants

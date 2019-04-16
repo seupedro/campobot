@@ -1,4 +1,4 @@
-from campobot.database import save_profile_db
+from database import save_profile_db
 from telegram import Bot, Chat, KeyboardButton, Message, ReplyKeyboardMarkup, Update, User
 
 reply_main_keyboard = ReplyKeyboardMarkup([[KeyboardButton(u"🕓 Horas"),

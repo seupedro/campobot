@@ -1,6 +1,6 @@
 from telegram import InlineKeyboardMarkup, InlineKeyboardButton, User, Update, Bot, CallbackQuery
 
-from campobot.database import get_pubs_db, save_pubs_db
+from database import get_pubs_db, save_pubs_db
 
 CALLBACK_PUBS_ADD_ONE = 'pubs_add_one'
 CALLBACK_PUBS_ADD_THREE = 'pubs_add_three'

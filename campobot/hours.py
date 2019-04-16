@@ -1,7 +1,7 @@
 from telegram import Update, Bot, InlineKeyboardButton, CallbackQuery, InlineKeyboardMarkup
 
-from campobot.cronometer import START_CTIMER
-from campobot.database import get_hours_db, save_hours_db
+from cronometer import START_CTIMER
+from database import get_hours_db, save_hours_db
 
 # Callback Constants
 CALLBACK_HOURS_ADD = 'hours_add'

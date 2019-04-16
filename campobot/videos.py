@@ -1,5 +1,5 @@
 from telegram import Update, Bot, InlineKeyboardButton, CallbackQuery, InlineKeyboardMarkup
-from campobot.database import get_videos_db, save_videos_db
+from database import get_videos_db, save_videos_db
 
 
 # Callback Constants
