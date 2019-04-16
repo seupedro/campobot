@@ -53,7 +53,7 @@ def startup_mongodb():
     global logs_collection
     global people_collection
 
-    uri = open('token_db.txt', 'r').read().strip()
+    uri = open('campobot/token/token_db.txt', 'r').read().strip()
     client = MongoClient(uri)
     db = client['campo']
 

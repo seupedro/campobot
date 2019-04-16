@@ -1,5 +1,5 @@
-from telegram import Update, Bot, InlineKeyboardButton, CallbackQuery, InlineKeyboardMarkup, User, Chat
-from database import get_videos_db, save_videos_db
+from telegram import Update, Bot, InlineKeyboardButton, CallbackQuery, InlineKeyboardMarkup
+from campobot.database import get_videos_db, save_videos_db
 
 
 # Callback Constants
@@ -14,7 +14,7 @@ add_keyboard = InlineKeyboardMarkup(
 
 add_remove_keyboard = InlineKeyboardMarkup(
      [[InlineKeyboardButton("+3", callback_data=CALLBACK_VIDEO_ADD_THREE),
-      InlineKeyboardButton("+1", callback_data=CALLBACK_VIDEO_ADD_ONE ),
+      InlineKeyboardButton("+1", callback_data=CALLBACK_VIDEO_ADD_ONE),
       InlineKeyboardButton("-1", callback_data=CALLBACK_VIDEO_REMOVE_ONE)]]
 )
 

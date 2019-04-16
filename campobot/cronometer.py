@@ -1,7 +1,7 @@
 import time
 
-from database import save_cron_db
-from telegram import InlineKeyboardButton, Update, Bot, InlineKeyboardMarkup, CallbackQuery, Chat, Message, User
+from campobot.database import save_cron_db
+from telegram import InlineKeyboardButton, Update, Bot, InlineKeyboardMarkup, CallbackQuery
 
 # Constants
 START_CTIMER = 'start_ctime'

@@ -1,0 +1,47 @@
+version: '3.7'
+services:
+
+  mongo:
+    build: ./campodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: rootQ4dGr
+      MONGO_INITDB_ROOT_PASSWORD: bjxTCEuda8b3
+    container_name: campodb
+    image: mongo:4
+    restart: always
+    volumes:
+      - ./campodb/mongo-users.js:/docker-entrypoint-initdb.d/mongo-users.js
+    ports:
+      - "27017:27017"
+    networks:
+      camponet:
+        ipv4_address: 177.17.0.10
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongo -u root -p root --quiet
+      interval: 1m30s
+      timeout: 30s
+      retries: 10
+      start_period: 1m30s
+
+  campo:
+    build: ./campobot
+    container_name: campobot
+    image: python:3
+    restart: always
+    ports:
+      - "8443:8443"
+    links:
+      - mongo
+    depends_on:
+      - mongo
+    networks:
+      camponet:
+        ipv4_address: 177.17.0.7
+
+networks:
+  camponet:
+    name: camponet
+    ipam:
+      driver: default
+      config:
+        - subnet: 177.17.0.0/28

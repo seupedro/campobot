@@ -1,11 +1,10 @@
 import datetime
 
-from telegram import Bot, Chat, Message, Update, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
+from telegram import Bot, Message, Update, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 from telegram.ext import Job
 
-import database
-import hours
-from database import get_report_db, get_profile_list_db
+from campobot import hours, database
+from campobot.database import get_report_db, get_profile_list_db
 
 # Callbacks
 CALLBACK_REPORT_LAST_MONTH = "report_last_month"
