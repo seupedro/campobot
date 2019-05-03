@@ -63,16 +63,18 @@ def error(bot: Bot, update: Update, error):
 
 def startup():
 
-    REGEX_START_WITH_EMOJI_SLASH = '(\W |\/)?'
-    REGEX_VIDEO = '((V|v)(í|i)deo(s)?)'
-    REGEX_HOURS = '((H|h)ora(s)?)'
-    REGEX_CRON = '((C|c)ron((o|\S)metr(\w+))?)'
-    REGEX_PUBS = '((P|p)ublica(c|\S)((a|\S)|(o|\S))(\w+)?)'
-    REGEX_RETURNS = '((R|r)evisita(s)?)'
-    REGEX_STUDIES = '((E|e)stud(\w+))'
-    REGEX_REPORT = '((R|r)elat(o|\S)ri(o|os))'
-    REGEX_HELP = '(A|a)jud(a|e|o)'
-    REGEX_404 = '\w+'
+    REGEX_START_WITH_EMOJI_SLASH = r'(\W |\/)?'
+    REGEX_VIDEO = r'((V|v)(í|i)deo(s)?)'
+    REGEX_HOURS = r'((H|h)ora(s)?)'
+    REGEX_CRON = r'((C|c)ron((o|\S)metr(\w+))?)'
+    REGEX_PUBS = r'((P|p)ublica(c|\S)((a|\S)|(o|\S))(\w+)?)'
+    REGEX_RETURNS = r'((R|r)evisita(s)?)'
+    REGEX_STUDIES = r'((E|e)stud(\w+))'
+    REGEX_REPORT = r'((R|r)elat(o|\S)ri(o|os))'
+    REGEX_HELP = r'(A|a)jud(a|e|o)'
+    REGEX_404 = r'.+'
+
+    REGEX_OFFLINE_ADD_HOURS = r'\+\d+(:[0-5][0-9])?(\s)?(h(ora|r)?(s)?)'
 
     msg_queue = mq.MessageQueue(all_burst_limit=28, all_time_limit_ms=1050)
     request = Request(con_pool_size=8)
