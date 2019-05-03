@@ -126,6 +126,8 @@ def save_cron_db(bot, update, cron_time):
 
 def save_hours_db(update, hours_count):
     usr: User = update.effective_user
+    if type(hours_count) is not int:
+        raise TypeError('Invalid data type. Expected <int> but found', type(hours_count))
 
     reports_collection.update_one(
         filter={
