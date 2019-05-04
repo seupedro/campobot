@@ -171,7 +171,13 @@ def startup():
 
     # Start MongoDB and Bot
     startup_mongodb()
-    updater.start_polling()
+    updater.start_webhook(listen='0.0.0.0',
+                          port=443,
+                          url_path=TOKEN.split(':')[1],
+                          key='cert/private.key',
+                          cert='cert/cert.pem',
+                          webhook_url=str('https://35.231.210.15:443/' + TOKEN.split(':')[1]))
+    updater.idle()
 
 
 if __name__ == '__main__':
