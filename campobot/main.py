@@ -7,7 +7,6 @@ from telegram.ext import CallbackQueryHandler, CommandHandler, RegexHandler, Upd
 from telegram.utils.request import Request
 from telegram.ext import messagequeue as mq
 
-import Regex
 from commands import start, callback_404
 from cronometer import cron_callback, CALLBACK_CRON_SAVE, cron_inline, CALLBACK_CRON_UPDATE, \
     CALLBACK_CRON_START, CALLBACK_CRON_STOP, CALLBACK_CRON_DISCARD
@@ -65,11 +64,21 @@ def error(bot: Bot, update: Update, error):
 
 
 def startup():
-    print('main called')
+
+    REGEX_START_WITH_EMOJI_SLASH = '(\W |\/)?'
+    REGEX_VIDEO = '((V|v)(í|i)deo(s)?)'
+    REGEX_HOURS = '((H|h)ora(s)?)'
+    REGEX_CRON = '((C|c)ron((o|\S)metr(\w+))?)'
+    REGEX_PUBS = '((P|p)ublica(c|\S)((a|\S)|(o|\S))(\w+)?)'
+    REGEX_RETURNS = '((R|r)evisita(s)?)'
+    REGEX_STUDIES = '((E|e)stud(\w+))'
+    REGEX_REPORT = '((R|r)elat(o|\S)ri(o|os))'
+    REGEX_HELP = '(A|a)jud(a|e|o)'
+    REGEX_404 = '\w+'
 
     msg_queue = mq.MessageQueue(all_burst_limit=28, all_time_limit_ms=1050)
     request = Request(con_pool_size=8)
-    TOKEN = open('token/token_bot_test.txt', 'r').read().strip()
+    TOKEN = open('token/token_bot.txt', 'r').read().strip()
     campo_bot = MQBot(TOKEN, request=request, mqueue=msg_queue)
 
     updater = Updater(bot=campo_bot)
