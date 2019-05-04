@@ -171,7 +171,6 @@ def startup():
     # Start MongoDB and Bot
     startup_mongodb()
     updater.start_polling()
-    #updater.idle() TODO: uncomment this line
 
 
 if __name__ == '__main__':
