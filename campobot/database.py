@@ -53,10 +53,8 @@ def startup_mongodb():
     global logs_collection
     global people_collection
 
-    # uri = open('campobot/token/token_db.txt', 'r').read().strip()
-    client = MongoClient(host='localhost', port=27017,
-                         username='campobDlu61', password='GfDbz6zeqLiP',
-                         authSource='campo')
+    uri = open('token/token_db.txt', 'r').read().strip()
+    client = MongoClient(uri)
     db = client['campo']
 
     campo_collections_names = ['profiles', 'reports', 'logs', 'people']
