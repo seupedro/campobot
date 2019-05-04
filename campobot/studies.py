@@ -1,8 +1,9 @@
 # Callback Constants
 import re
 
-from telegram import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, Update, Bot, Message, Chat
+from telegram import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, Update, Bot, Message, Chat, ChatAction
 
+from actions import send_action
 from commands import reply_main_keyboard
 from database import get_studies_db, save_studies_db
 
@@ -22,6 +23,7 @@ add_remove_keyboard = InlineKeyboardMarkup(
 )
 
 
+@send_action(ChatAction.TYPING)
 def studies_inline(bot: Bot, update: Update):
     studies_count = get_studies_db(update)
 
@@ -78,6 +80,7 @@ def studies_callback(bot: Bot, update: Update):
     query.answer()
 
 
+@send_action(ChatAction.TYPING)
 def studies_offline_add_callback(bot: Bot, update: Update):
     chat: Chat = update.effective_chat
     msg: Message = update.effective_message
@@ -109,6 +112,7 @@ def studies_offline_add_callback(bot: Bot, update: Update):
         raise TypeError('Invalid data type in regex', increment[0])
 
 
+@send_action(ChatAction.TYPING)
 def studies_offline_remove_callback(bot: Bot, update: Update):
     chat: Chat = update.effective_chat
     msg: Message = update.effective_message

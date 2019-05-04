@@ -53,8 +53,10 @@ def startup_mongodb():
     global logs_collection
     global people_collection
 
-    uri = open('token/token_db.txt', 'r').read().strip()
-    client = MongoClient(uri)
+    # uri = open('campobot/token/token_db.txt', 'r').read().strip()
+    client = MongoClient(host='localhost', port=27017,
+                         username='campobDlu61', password='GfDbz6zeqLiP',
+                         authSource='campo')
     db = client['campo']
 
     campo_collections_names = ['profiles', 'reports', 'logs', 'people']
@@ -126,7 +128,7 @@ def save_cron_db(bot, update, cron_time):
 
 def save_hours_db(update, hours_count):
     usr: User = update.effective_user
-    if type(hours_count) is not int:
+    if type(hours_count) is (not int or not float):
         raise TypeError('Invalid data type. Expected <int> but found', type(hours_count))
 
     reports_collection.update_one(

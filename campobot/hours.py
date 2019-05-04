@@ -1,6 +1,7 @@
 import re
-from telegram import Update, Bot, InlineKeyboardButton, CallbackQuery, InlineKeyboardMarkup, Chat, Message
+from telegram import Update, Bot, InlineKeyboardButton, CallbackQuery, InlineKeyboardMarkup, Chat, Message, ChatAction
 
+from actions import send_action
 from commands import reply_main_keyboard
 from cronometer import START_CTIMER
 from database import get_hours_db, save_hours_db
@@ -66,6 +67,7 @@ add_remove_minutes_keyboard = InlineKeyboardMarkup(
 )
 
 
+@send_action(ChatAction.TYPING)
 def hours_inline(bot: Bot, update: Update):
     hours_count = get_hours_db(update)
 
@@ -218,6 +220,7 @@ def hours_callback(bot: Bot, update: Update, user_data: dict = None):
     query.answer()
 
 
+@send_action(ChatAction.TYPING)
 def callback_offline_add_hours(bot: Bot, update: Update):
     chat: Chat = update.effective_chat
     msg: Message = update.effective_message
@@ -250,6 +253,7 @@ def callback_offline_add_hours(bot: Bot, update: Update):
                      reply_markup=reply_main_keyboard)
 
 
+@send_action(ChatAction.TYPING)
 def callback_offline_remove_hours(bot: Bot, update: Update):
     chat: Chat = update.effective_chat
     msg: Message = update.effective_message
@@ -286,6 +290,7 @@ def callback_offline_remove_hours(bot: Bot, update: Update):
                      reply_markup=reply_main_keyboard)
 
 
+@send_action(ChatAction.TYPING)
 def callback_offline_add_minutes(bot: Bot, update: Update):
     chat: Chat = update.effective_chat
     msg: Message = update.effective_message
@@ -313,6 +318,7 @@ def callback_offline_add_minutes(bot: Bot, update: Update):
         raise TypeError('Invalid data type in regex', increment[0])
 
 
+@send_action(ChatAction.TYPING)
 def callback_offline_remove_minutes(bot: Bot, update: Update):
     chat: Chat = update.effective_chat
     msg: Message = update.effective_message

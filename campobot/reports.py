@@ -1,10 +1,10 @@
 import datetime
-
-from telegram import Bot, Message, Update, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
-from telegram.ext import Job
-
 import database
 import hours
+
+from telegram import Bot, Message, Update, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, ChatAction
+from telegram.ext import Job
+from actions import send_action
 from database import get_report_db, get_profile_list_db
 
 # Callbacks
@@ -144,20 +144,21 @@ def report_notification_job(bot: Bot, job: Job):
 
         for profile in profile_list:
             chat_id = profile.get(database.CHAT_ID)
-            report_user = get_report_db(chat_id=chat_id)
+            user_report = get_report_db(chat_id=chat_id)
+            bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
 
-            if report_user is not None:
-                month_report = report_generator(report_user)
+            if user_report is not None:
+                month_report = report_generator(user_report)
 
                 bot.send_message(text=month_report +
                                  'Este é um lembrete do seu relatório. \n'
-                                 'Parabéns por ter se esforçando no campo. Continue assim!',
+                                 'Parabéns por ter se esforçando no campo. Continue assim! 😁👍',
                                  chat_id=chat_id,
                                  parse_mode='Markdown')
 
             else:
                 bot.send_message(text='Olá {}, tudo bem? \n\n'
-                                      'Eu notei que esse mês você não chegou a usar este assistente. 😢 \n'
+                                      'Eu notei que esse mês você não chegou a usar a me usar. \n'
                                       'Tem alguma coisa que eu poderia melhorar? \n\n'
                                       'O Campo Fácil foi fruto de um longo trabalho árduo, feito com muito carinho para ajudar os publicadores e pioneiros a marcarem suas horas no serviço de campo. \n\n'
                                       'Ele foi feito para funcionar de uma forma simples, para que até mesmo pessoas com pouca intimidade com celulares, como os idosos, possam tirar aproveito. \n\n'

@@ -1,5 +1,6 @@
+from actions import send_action
 from database import save_profile_db
-from telegram import Bot, Chat, KeyboardButton, Message, ReplyKeyboardMarkup, Update, User
+from telegram import Bot, Chat, KeyboardButton, Message, ReplyKeyboardMarkup, Update, User, ChatAction
 
 reply_main_keyboard = ReplyKeyboardMarkup([[KeyboardButton(u"🕓 Horas"),
                                             KeyboardButton(u"⏱ Cronômetro")],
@@ -12,6 +13,7 @@ reply_main_keyboard = ReplyKeyboardMarkup([[KeyboardButton(u"🕓 Horas"),
                                             KeyboardButton(u'📝 Relatório')]], resize_keyboard=True)
 
 
+@send_action(ChatAction.TYPING)
 def start(bot, update, user_data=None):
     usr: User = update.effective_user
     chat: Chat = update.effective_chat
@@ -26,6 +28,7 @@ def start(bot, update, user_data=None):
                      reply_markup=reply_main_keyboard)
 
 
+@send_action(ChatAction.TYPING)
 def callback_404(bot: Bot, update: Update):
     usr: User = update.effective_user
     chat: Chat = update.effective_chat

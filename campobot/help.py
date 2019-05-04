@@ -1,8 +1,7 @@
-# Callback Constants
-import time
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update, Bot, CallbackQuery, ChatAction
 
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update, Bot, CallbackQuery
-from telegram.ext import JobQueue
+# Callback Constants
+from actions import send_action
 
 CALLBACK_HELP_HOURS = 'help_hours'
 CALLBACK_HELP_CRON = 'help_cron'
@@ -87,6 +86,7 @@ STUDY_VIDEO = 'BAADAQADRQADGHDpRGWAjXX81OM7Ag'
 REPORT_VIDEO = 'CgADAQADXgADLpQRRWmfd_4ozPnwAg'
 
 
+@send_action(ChatAction.TYPING)
 def help_inline(bot: Bot, update: Update):
     update.message.reply_text(text='❓ *Ajuda*\n\n'
                                    "Tem uma dúvida? \n"
