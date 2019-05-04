@@ -65,6 +65,7 @@ def error(bot: Bot, update: Update, error):
 
 
 def startup():
+    print('main called')
 
     msg_queue = mq.MessageQueue(all_burst_limit=28, all_time_limit_ms=1050)
     request = Request(con_pool_size=8)
