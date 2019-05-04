@@ -1,6 +1,9 @@
 # Callback Constants
-from telegram import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, Update, Bot
+import re
 
+from telegram import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, Update, Bot, Message, Chat
+
+from commands import reply_main_keyboard
 from database import get_studies_db, save_studies_db
 
 CALLBACK_STUDIES_ADD_ONE = 'studies_add_one'
@@ -73,3 +76,66 @@ def studies_callback(bot: Bot, update: Update):
 
     save_studies_db(update, studies_count)
     query.answer()
+
+
+def studies_offline_add_callback(bot: Bot, update: Update):
+    chat: Chat = update.effective_chat
+    msg: Message = update.effective_message
+
+    studies_count = get_studies_db(update)
+    increment = re.findall('\d+', msg.text)
+
+    if increment[0].isdigit():
+        studies_count += int(increment[0])
+
+        # Prevent negative values
+        if studies_count < 0:
+            studies_count = 0
+        save_studies_db(update, studies_count)
+
+        bot.send_message(text='✅ Seus estudos foram adicionados!',
+                         chat_id=chat.id,
+                         reply_to_message_id=msg.message_id,
+                         reply_markup=reply_main_keyboard)
+    else:
+        # Error caught
+        bot.send_message(text='😓 Desculpe, algo estranho aconteceu. \n'
+                              'Não foi possível adicionar seus estudos. '
+                              'Tente novamente ou escreva /ajuda',
+                         chat_id=chat.id,
+                         reply_to_message_id=msg.message_id,
+                         reply_markup=reply_main_keyboard)
+
+        raise TypeError('Invalid data type in regex', increment[0])
+
+
+def studies_offline_remove_callback(bot: Bot, update: Update):
+    chat: Chat = update.effective_chat
+    msg: Message = update.effective_message
+
+    studies_count = get_studies_db(update)
+    decrement = re.findall('\d+', msg.text)
+
+    if decrement[0].isdigit():
+        studies_count -= int(decrement[0])
+
+        # Prevent negative values
+        if studies_count < 0:
+            studies_count = 0
+        save_studies_db(update, studies_count)
+
+        bot.send_message(text='✅ Seus estudos foram atualizados!',
+                         chat_id=chat.id,
+                         reply_to_message_id=msg.message_id,
+                         reply_markup=reply_main_keyboard)
+    else:
+        # Error caught
+        bot.send_message(text='😓 Desculpe, algo estranho aconteceu. \n'
+                              'Não foi possível adicionar seus estudos. '
+                              'Tente novamente ou escreva /ajuda',
+                         chat_id=chat.id,
+                         reply_to_message_id=msg.message_id,
+                         reply_markup=reply_main_keyboard)
+
+        raise TypeError('Invalid data type in regex', decrement[0])
+

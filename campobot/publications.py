@@ -1,5 +1,8 @@
-from telegram import InlineKeyboardMarkup, InlineKeyboardButton, User, Update, Bot, CallbackQuery
+import re
 
+from telegram import InlineKeyboardMarkup, InlineKeyboardButton, User, Update, Bot, CallbackQuery, Message, Chat
+
+from commands import reply_main_keyboard
 from database import get_pubs_db, save_pubs_db
 
 CALLBACK_PUBS_ADD_ONE = 'pubs_add_one'
@@ -74,3 +77,62 @@ def pubs_callback(bot: Bot, update: Update):
 
     save_pubs_db(update, pubs_count)
     query.answer()
+
+
+def pubs_offline_add_callback(bot: Bot, update: Update):
+    chat: Chat = update.effective_chat
+    msg: Message = update.effective_message
+
+    pubs_count = get_pubs_db(update)
+    increment = re.findall('\d+', msg.text)
+
+    if increment[0].isdigit():
+        pubs_count += int(increment[0])
+        save_pubs_db(update, pubs_count)
+
+        bot.send_message(text='✅ Suas publicações foram adicionados!',
+                         chat_id=chat.id,
+                         reply_to_message_id=msg.message_id,
+                         reply_markup=reply_main_keyboard)
+    else:
+        # Error caught
+        bot.send_message(text='😓 Desculpe, algo estranho aconteceu. \n'
+                              'Não foi possível adicionar suas publicações. '
+                              'Tente novamente ou escreva /ajuda',
+                         chat_id=chat.id,
+                         reply_to_message_id=msg.message_id,
+                         reply_markup=reply_main_keyboard)
+
+        raise TypeError('Invalid data type in regex', increment[0])
+
+
+def pubs_offline_remove_callback(bot: Bot, update: Update):
+    chat: Chat = update.effective_chat
+    msg: Message = update.effective_message
+
+    pubs_count = get_pubs_db(update)
+    decrement = re.findall('\d+', msg.text)
+
+    if decrement[0].isdigit():
+        pubs_count -= int(decrement[0])
+
+        # Prevent negative values
+        if pubs_count < 0:
+            pubs_count = 0
+        save_pubs_db(update, pubs_count)
+
+        bot.send_message(text='✅ Suas publicações foram atualizadas!',
+                         chat_id=chat.id,
+                         reply_to_message_id=msg.message_id,
+                         reply_markup=reply_main_keyboard)
+    else:
+        # Error caught
+        bot.send_message(text='😓 Desculpe, algo estranho aconteceu. \n'
+                              'Não foi possível adicionar suas publicações. '
+                              'Tente novamente ou escreva /ajuda',
+                         chat_id=chat.id,
+                         reply_to_message_id=msg.message_id,
+                         reply_markup=reply_main_keyboard)
+
+        raise TypeError('Invalid data type in regex', decrement[0])
+

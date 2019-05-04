@@ -1,5 +1,7 @@
-from telegram import Update, Bot, InlineKeyboardButton, CallbackQuery, InlineKeyboardMarkup
+import re
+from telegram import Update, Bot, InlineKeyboardButton, CallbackQuery, InlineKeyboardMarkup, Chat, Message
 
+from commands import reply_main_keyboard
 from cronometer import START_CTIMER
 from database import get_hours_db, save_hours_db
 
@@ -214,6 +216,132 @@ def hours_callback(bot: Bot, update: Update, user_data: dict = None):
 
     # Cronometer ins't active, just go ahead.
     query.answer()
+
+
+def callback_offline_add_hours(bot: Bot, update: Update):
+    chat: Chat = update.effective_chat
+    msg: Message = update.effective_message
+
+    hours_count = get_hours_db(update)
+    increment = re.findall('\d+', msg.text)
+
+    if len(increment) > 1:
+        # Input has hours and minutes
+        hours_count += int(increment[0]) * 3600 + int(increment[1]) * 60
+    else:
+        # Input only has hours
+        if increment[0].isdigit():
+            hours_count += int(increment[0]) * 3600
+        else:
+            # Error caught
+            bot.send_message(text='😓 Desculpe, algo estranho aconteceu. \n'
+                                  'Não foi possível adicionar suas horas. '
+                                  'Tente novamente ou escreva /ajuda',
+                             chat_id=chat.id,
+                             reply_to_message_id=msg.message_id,
+                             reply_markup=reply_main_keyboard)
+
+            raise TypeError('Invalid data type in regex', increment[0])
+
+    save_hours_db(update, hours_count)
+    bot.send_message(text='✅ Suas horas foram adicionadas!',
+                     chat_id=chat.id,
+                     reply_to_message_id=msg.message_id,
+                     reply_markup=reply_main_keyboard)
+
+
+def callback_offline_remove_hours(bot: Bot, update: Update):
+    chat: Chat = update.effective_chat
+    msg: Message = update.effective_message
+
+    hours_count = get_hours_db(update)
+    decrement = re.findall('\d+', msg.text)
+
+    if len(decrement) > 1:
+        # Input has hours and minutes
+        hours_count -= int(decrement[0]) * 3600 + int(decrement[1]) * 60
+    else:
+        # Input only has hours
+        if decrement[0].isdigit():
+            hours_count -= int(decrement[0]) * 3600
+        else:
+            # Error caught
+            bot.send_message(text='😓 Desculpe, algo estranho aconteceu. \n'
+                                  'Não foi possível adicionar suas horas. '
+                                  'Tente novamente ou escreva /ajuda',
+                             chat_id=chat.id,
+                             reply_to_message_id=msg.message_id,
+                             reply_markup=reply_main_keyboard)
+
+            raise TypeError('Invalid data type in regex', decrement[0])
+
+    # Prevent negatives values
+    if hours_count < 0:
+        hours_count = 0
+
+    save_hours_db(update, hours_count)
+    bot.send_message(text='✅ Suas horas foram atualizadas!',
+                     chat_id=chat.id,
+                     reply_to_message_id=msg.message_id,
+                     reply_markup=reply_main_keyboard)
+
+
+def callback_offline_add_minutes(bot: Bot, update: Update):
+    chat: Chat = update.effective_chat
+    msg: Message = update.effective_message
+
+    hours_count = get_hours_db(update)
+    increment = re.findall('\d+', msg.text)
+
+    if increment[0].isdigit():
+        hours_count += int(increment[0]) * 60
+        save_hours_db(update, hours_count)
+
+        bot.send_message(text='✅ Seus minutos foram adicionados!',
+                         chat_id=chat.id,
+                         reply_to_message_id=msg.message_id,
+                         reply_markup=reply_main_keyboard)
+    else:
+        # Error caught
+        bot.send_message(text='😓 Desculpe, algo estranho aconteceu. \n'
+                              'Não foi possível adicionar seus minutos. '
+                              'Tente novamente ou escreva /ajuda',
+                         chat_id=chat.id,
+                         reply_to_message_id=msg.message_id,
+                         reply_markup=reply_main_keyboard)
+
+        raise TypeError('Invalid data type in regex', increment[0])
+
+
+def callback_offline_remove_minutes(bot: Bot, update: Update):
+    chat: Chat = update.effective_chat
+    msg: Message = update.effective_message
+
+    hours_count = get_hours_db(update)
+    decrement = re.findall('\d+', msg.text)
+
+    if decrement[0].isdigit():
+        hours_count -= int(decrement[0]) * 60
+        # Prevent negatives values
+        if hours_count < 0:
+            hours_count = 0
+
+        save_hours_db(update, hours_count)
+
+        bot.send_message(text='✅ Seus minutos foram atualizados!',
+                         chat_id=chat.id,
+                         reply_to_message_id=msg.message_id,
+                         reply_markup=reply_main_keyboard)
+    else:
+        # Error caught
+        bot.send_message(text='😓 Desculpe, algo estranho aconteceu. \n'
+                              'Não foi possível editar seus minutos. '
+                              'Tente novamente ou escreva /ajuda',
+                         chat_id=chat.id,
+                         reply_to_message_id=msg.message_id,
+                         reply_markup=reply_main_keyboard)
+
+        raise TypeError('Invalid data type in regex', decrement[0])
 
 
 def seconds_to_hours(seconds):

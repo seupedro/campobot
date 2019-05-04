@@ -1,4 +1,8 @@
-from telegram import Update, Bot, InlineKeyboardButton, CallbackQuery, InlineKeyboardMarkup
+import re
+
+from telegram import Update, Bot, InlineKeyboardButton, CallbackQuery, InlineKeyboardMarkup, Chat, Message
+
+from commands import reply_main_keyboard
 from database import get_videos_db, save_videos_db
 
 
@@ -73,3 +77,62 @@ def video_callback(bot: Bot, update: Update):
 
     save_videos_db(update, video_count)
     query.answer()
+
+
+def video_offline_add_callback(bot: Bot, update: Update):
+    chat: Chat = update.effective_chat
+    msg: Message = update.effective_message
+
+    videos_count = get_videos_db(update)
+    increment = re.findall('\d+', msg.text)
+
+    if increment[0].isdigit():
+        videos_count += int(increment[0])
+        save_videos_db(update, videos_count)
+
+        bot.send_message(text='✅ Seus vídeos foram adicionados!',
+                         chat_id=chat.id,
+                         reply_to_message_id=msg.message_id,
+                         reply_markup=reply_main_keyboard)
+    else:
+        # Error caught
+        bot.send_message(text='😓 Desculpe, algo estranho aconteceu. \n'
+                              'Não foi possível adicionar seus minutos. '
+                              'Tente novamente ou escreva /ajuda',
+                         chat_id=chat.id,
+                         reply_to_message_id=msg.message_id,
+                         reply_markup=reply_main_keyboard)
+
+        raise TypeError('Invalid data type in regex', increment[0])
+
+
+def video_offline_remove_callback(bot: Bot, update: Update):
+    chat: Chat = update.effective_chat
+    msg: Message = update.effective_message
+
+    videos_count = get_videos_db(update)
+    decrement = re.findall('\d+', msg.text)
+
+    if decrement[0].isdigit():
+        videos_count -= int(decrement[0])
+
+        # Prevent negative values
+        if videos_count < 0:
+            videos_count = 0
+        save_videos_db(update, videos_count)
+
+        bot.send_message(text='✅ Seus vídeos foram atualizados!',
+                         chat_id=chat.id,
+                         reply_to_message_id=msg.message_id,
+                         reply_markup=reply_main_keyboard)
+    else:
+        # Error caught
+        bot.send_message(text='😓 Desculpe, algo estranho aconteceu. \n'
+                              'Não foi possível adicionar seus minutos. '
+                              'Tente novamente ou escreva /ajuda',
+                         chat_id=chat.id,
+                         reply_to_message_id=msg.message_id,
+                         reply_markup=reply_main_keyboard)
+
+        raise TypeError('Invalid data type in regex', decrement[0])
+
