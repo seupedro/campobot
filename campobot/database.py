@@ -165,6 +165,8 @@ def get_hours_db(update):
 
 def save_videos_db(update, videos_count):
     usr: User = update.effective_user
+    if type(videos_count) is not int:
+        raise TypeError('Invalid data type. Expected <int> but found', type(videos_count))
 
     reports_collection.update_one(
         filter={
@@ -201,6 +203,9 @@ def get_videos_db(update):
 def save_pubs_db(update, pubs_count):
     usr: User = update.effective_user
 
+    if type(pubs_count) is not int:
+        raise TypeError('Invalid data type. Expected <int> but found', type(pubs_count))
+
     reports_collection.update_one(
         filter={
             USER_ID: usr.id,
@@ -235,6 +240,9 @@ def get_pubs_db(update):
 
 def save_returns_db(update, return_count):
     usr: User = update.effective_user
+
+    if type(return_count) is not int:
+        raise TypeError('Invalid data type. Expected <int> but found', type(return_count))
 
     reports_collection.update_one(
         filter={
@@ -281,6 +289,9 @@ def get_returns_list_db(update):
 
 def save_studies_db(update, studies_count):
     usr: User = update.effective_user
+
+    if type(studies_count) is not int:
+        raise TypeError('Invalid data type. Expected <int> but found', type(studies_count))
 
     reports_collection.update_one(
         filter={
