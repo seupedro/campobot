@@ -1,7 +1,8 @@
 import time
 
+from actions import send_action
 from database import save_cron_db
-from telegram import InlineKeyboardButton, Update, Bot, InlineKeyboardMarkup, CallbackQuery
+from telegram import InlineKeyboardButton, Update, Bot, InlineKeyboardMarkup, CallbackQuery, ChatAction
 
 # Constants
 START_CTIMER = 'start_ctime'
@@ -30,6 +31,7 @@ save_discard_keyboard = InlineKeyboardMarkup(
 )
 
 
+@send_action(ChatAction.TYPING)
 def cron_inline(bot: Bot, update: Update, user_data: dict):
 
     if START_CTIMER in user_data:

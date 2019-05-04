@@ -1,7 +1,9 @@
 import re
 
-from telegram import InlineKeyboardMarkup, InlineKeyboardButton, User, Update, Bot, CallbackQuery, Message, Chat
+from telegram import InlineKeyboardMarkup, InlineKeyboardButton, User, Update, Bot, CallbackQuery, Message, Chat, \
+    ChatAction
 
+from actions import send_action
 from commands import reply_main_keyboard
 from database import get_pubs_db, save_pubs_db
 
@@ -22,6 +24,7 @@ add_remove_keyboard = InlineKeyboardMarkup(
 )
 
 
+@send_action(ChatAction.TYPING)
 def pubs_inline(bot: Bot, update: Update):
     usr: User = update.effective_user
     pubs_count = get_pubs_db(update)
@@ -79,6 +82,7 @@ def pubs_callback(bot: Bot, update: Update):
     query.answer()
 
 
+@send_action(ChatAction.TYPING)
 def pubs_offline_add_callback(bot: Bot, update: Update):
     chat: Chat = update.effective_chat
     msg: Message = update.effective_message
@@ -106,6 +110,7 @@ def pubs_offline_add_callback(bot: Bot, update: Update):
         raise TypeError('Invalid data type in regex', increment[0])
 
 
+@send_action(ChatAction.TYPING)
 def pubs_offline_remove_callback(bot: Bot, update: Update):
     chat: Chat = update.effective_chat
     msg: Message = update.effective_message

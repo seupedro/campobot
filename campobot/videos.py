@@ -1,7 +1,8 @@
 import re
 
-from telegram import Update, Bot, InlineKeyboardButton, CallbackQuery, InlineKeyboardMarkup, Chat, Message
+from telegram import Update, Bot, InlineKeyboardButton, CallbackQuery, InlineKeyboardMarkup, Chat, Message, ChatAction
 
+from actions import send_action
 from commands import reply_main_keyboard
 from database import get_videos_db, save_videos_db
 
@@ -22,7 +23,7 @@ add_remove_keyboard = InlineKeyboardMarkup(
       InlineKeyboardButton("-1", callback_data=CALLBACK_VIDEO_REMOVE_ONE)]]
 )
 
-
+@send_action(ChatAction.TYPING)
 def video_inline(bot: Bot, update: Update):
     video_count = get_videos_db(update)
 
@@ -79,6 +80,7 @@ def video_callback(bot: Bot, update: Update):
     query.answer()
 
 
+@send_action(ChatAction.TYPING)
 def video_offline_add_callback(bot: Bot, update: Update):
     chat: Chat = update.effective_chat
     msg: Message = update.effective_message
@@ -106,6 +108,7 @@ def video_offline_add_callback(bot: Bot, update: Update):
         raise TypeError('Invalid data type in regex', increment[0])
 
 
+@send_action(ChatAction.TYPING)
 def video_offline_remove_callback(bot: Bot, update: Update):
     chat: Chat = update.effective_chat
     msg: Message = update.effective_message

@@ -144,7 +144,8 @@ def report_notification_job(bot: Bot, job: Job):
 
         for profile in profile_list:
             chat_id = profile.get(database.CHAT_ID)
-            report_user = get_report_db(chat_id=chat_id)
+            user_report = get_report_db(chat_id=chat_id)
+            bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
 
             if user_report is not None:
                 month_report = report_generator(user_report)
