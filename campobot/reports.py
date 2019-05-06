@@ -26,6 +26,7 @@ CURRENT_MONTH_KEYBOARD = InlineKeyboardMarkup(
 )
 
 
+@send_action(ChatAction.TYPING)
 def reports_inline(bot: Bot, update: Update):
     msg: Message = update.effective_message
     report_count = get_report_db(update)
