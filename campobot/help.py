@@ -85,7 +85,7 @@ RETURNS_VIDEO = 'BAADAQADmQADDkrpRIPvjeXYKULnAg'
 STUDY_VIDEO = 'BAADAQADRQADGHDpRGWAjXX81OM7Ag'
 REPORT_VIDEO = 'CgADAQADXgADLpQRRWmfd_4ozPnwAg'
 
-
+# TODO: explain offline
 @send_action(ChatAction.TYPING)
 def help_inline(bot: Bot, update: Update):
     update.message.reply_text(text='❓ *Ajuda*\n\n'
