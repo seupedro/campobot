@@ -28,7 +28,7 @@ STUDIES_COMMAND = r'((E|e)stud(\w+))'
 STUDIES_OFFLINE_ADD = r'^(\+\s?\d+\s?((E|e)(st(ud\w+)?)?))$'
 STUDIES_OFFLINE_REMOVE = r'^(\-\s?\d+\s?((E|e)(st(ud\w+)?)?))$'
 
-# Others Commands
+# Others Commands Foo
 CRON_COMMAND = r'((C|c)ron((o|\S)metr(\w+))?)'
 REPORT_COMMAND = r'((R|r)elat(o|\S)ri(o|os))'
 HELP_COMMAND = r'(A|a)jud(a|e|o)'
