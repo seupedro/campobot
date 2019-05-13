@@ -20,7 +20,9 @@ CALLBACK_RETURNS_INSTERESTED = 'returns_interested'
 
 # Keyboards Inline
 add_keyboard = InlineKeyboardMarkup(
-    [[InlineKeyboardButton("Adicionar", callback_data=CALLBACK_RETURNS_ADD_ONE)]]
+    [[InlineKeyboardButton("Adicionar", callback_data=CALLBACK_RETURNS_ADD_ONE)],
+
+     [InlineKeyboardButton("🙋 Interessados", callback_data=CALLBACK_RETURNS_LIST)]]
 )
 
 add_remove_keyboard = InlineKeyboardMarkup(
@@ -29,10 +31,6 @@ add_remove_keyboard = InlineKeyboardMarkup(
       InlineKeyboardButton("-1", callback_data=CALLBACK_RETURNS_REMOVE_ONE)],
 
      [InlineKeyboardButton("🙋 Interessados", callback_data=CALLBACK_RETURNS_LIST)]]
-)
-
-add_interested = InlineKeyboardMarkup(
-    [[InlineKeyboardButton("Adicionar", callback_data=CALLBACK_RETURNS_INSTERESTED)]]
 )
 
 
@@ -207,7 +205,7 @@ def returns_people_remove_callback(bot: Bot, update: Update):
                                   'Tente novamente ou escreva /ajuda \n\n'
                                   'Esse comando serve para apagar 🙋‍ pessoas interessadas. '
                                   'Se voce nao sabe sobre o que eu estou falando, clique no botão 🏡 Revisitas '
-                                  'no teclado abaixo.')
+                                  'no teclado abaixo. ')
     else:
         bot.send_message(chat_id=chat.id,
                          reply_markup=reply_main_keyboard,
