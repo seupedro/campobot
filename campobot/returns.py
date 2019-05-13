@@ -1,12 +1,15 @@
 # Callback Constants
 import re
 
+from pymongo.cursor import Cursor
 from telegram import Bot, CallbackQuery, Chat, InlineKeyboardButton, InlineKeyboardMarkup, Update, User, Message, \
     ChatAction
 
+import Regex
+import database
 from actions import send_action
 from commands import reply_main_keyboard
-from database import get_returns_db, get_returns_list_db, save_returns_db
+from database import get_returns_db, save_returns_db, save_person_db, get_person_list_db, remove_person_db
 
 CALLBACK_RETURNS_ADD_ONE = 'returns_add_one'
 CALLBACK_RETURNS_REMOVE_ONE = 'returns_remove_one'
@@ -21,13 +24,11 @@ add_keyboard = InlineKeyboardMarkup(
 )
 
 add_remove_keyboard = InlineKeyboardMarkup(
-     [[InlineKeyboardButton("+3", callback_data=CALLBACK_RETURNS_ADD_THREE),
-      InlineKeyboardButton("+1", callback_data=CALLBACK_RETURNS_ADD_ONE ),
-      InlineKeyboardButton("-1", callback_data=CALLBACK_RETURNS_REMOVE_ONE)]
-      #    ,
-      #
-      # [InlineKeyboardButton("🙋 Interessados", callback_data=CALLBACK_RETURNS_LIST)]
-      ]
+    [[InlineKeyboardButton("+3", callback_data=CALLBACK_RETURNS_ADD_THREE),
+      InlineKeyboardButton("+1", callback_data=CALLBACK_RETURNS_ADD_ONE),
+      InlineKeyboardButton("-1", callback_data=CALLBACK_RETURNS_REMOVE_ONE)],
+
+     [InlineKeyboardButton("🙋 Interessados", callback_data=CALLBACK_RETURNS_LIST)]]
 )
 
 add_interested = InlineKeyboardMarkup(
@@ -46,7 +47,7 @@ def returns_inline(bot: Bot, update: Update):
                                   reply_markup=add_remove_keyboard, parse_mode='Markdown')
 
     else:
-        update.message.reply_text(text='🏠 *Revisitas*\n\n' 
+        update.message.reply_text(text='🏠 *Revisitas*\n\n'
                                        "Você não marcou nenhuma revisita até agora.",
                                   reply_markup=add_keyboard, parse_mode='Markdown')
 
@@ -90,41 +91,26 @@ def returns_callback(bot: Bot, update: Update):
                               reply_markup=add_remove_keyboard,
                               parse_mode='Markdown')
 
-    # TODO: Handle Interested People
     elif query.data == CALLBACK_RETURNS_LIST:
-        returns_list = get_returns_list_db(update)
-        if len(returns_list) == 0:
+        person_cursor: Cursor = get_person_list_db(update)
 
-            bot.edit_message_text(text='🙋 *Interessados*\n\n'
-                                       'Você não adicionou nenhum interessado até agora.',
-                                  chat_id=query.message.chat_id,
-                                  message_id=query.message.message_id,
-                                  reply_markup=add_interested,
-                                  parse_mode='Markdown')
-        elif len(returns_list) <= 3:
-            position = 0
-            interested = ''
-            for item in returns_list:
-                position += 1
-                interested += 'N: ' + str(position) + \
-                              'Nome: ' + item.get('name') + '\n' + \
-                              'Endereço: ' + item.get('address') + '\n\n'
-
-            bot.edit_message_text(text='🙋 *Interessados*\n\n' +
-                                       interested,
-                                  chat_id=query.message.chat_id,
-                                  message_id=query.message.message_id,
-                                  reply_markup=add_interested,
-                                  parse_mode='Markdown')
-
+        if person_cursor is not None:
+            for person in person_cursor:
+                bot.send_message(chat_id=chat.id,
+                                 text=person.get(database.PERSON_INFO))
         else:
-
-            bot.edit_message_text(text='🙋 *Interessados*\n\n'
-                                       'Mais de 4 interessados. Falta a lista.',
-                                  chat_id=query.message.chat_id,
-                                  message_id=query.message.message_id,
-                                  reply_markup=add_interested,
-                                  parse_mode='Markdown')
+            bot.send_message(chat_id=chat.id,
+                             parse_mode='Markdown',
+                             text='🙋‍️ *Interessados*\n\n'
+                                  'Olá! Você não adicionou ninguém como interessado até agora. '
+                                  'Para salvar, basta escrever as todas as informacoes sobre '
+                                  'a pessoa interessada usando o teclado abaixo. \n\n'
+                                  'Por exemplo, você pode mandar uma mensagem assim e '
+                                  'ela será salva automaticamente: ')
+            bot.send_message(chat_id=chat.id,
+                             text='Lucas de Lima \n'
+                                  'Rua Passos Falcone, 501 \n'
+                                  'Por que Deus permite o sofrimento?')
 
     save_returns_db(update, returns_count)
     query.answer()
@@ -190,3 +176,43 @@ def returns_offline_remove_callback(bot: Bot, update: Update):
         raise TypeError('Invalid data type in regex', decrement[0])
 
 
+@send_action(ChatAction.TYPING)
+def returns_people_callback(bot: Bot, update: Update):
+    msg: Message = update.effective_message
+    chat: Chat = update.effective_chat
+
+    save_person_db(update, str(msg.text))
+    bot.send_message(chat_id=chat.id,
+                     text='✅ Revisita salva!',
+                     reply_to_message_id=msg.message_id)
+
+
+# TODO: Correct spelling
+@send_action(ChatAction.TYPING)
+def returns_people_remove_callback(bot: Bot, update: Update):
+    msg: Message = update.effective_message
+    chat: Chat = update.effective_chat
+
+    if msg.reply_to_message is not None:
+        deleted_count = remove_person_db(update, msg.reply_to_message.text)
+        if deleted_count > 0:
+            bot.send_message(chat_id=chat.id,
+                             reply_to_message_id=msg.reply_to_message.message_id,
+                             text='✅ Apagado')
+        else:
+            bot.send_message(chat_id=chat.id,
+                             reply_to_message_id=msg.reply_to_message.message_id,
+                             reply_markup=reply_main_keyboard,
+                             text='😕 Hmmm... Parece que voce tentou deletar algo invalido. '
+                                  'Tente novamente ou escreva /ajuda \n\n'
+                                  'Esse comando serve para apagar 🙋‍ pessoas interessadas. '
+                                  'Se voce nao sabe sobre o que eu estou falando, clique no botão 🏡 Revisitas '
+                                  'no teclado abaixo.')
+    else:
+        bot.send_message(chat_id=chat.id,
+                         reply_markup=reply_main_keyboard,
+                         text='😓 Desculpe, mas você nao selecionou nada para apagar. \n\n'
+                              'Esse comando serve para apagar 🙋‍ pessoas interessadas. '
+                              'Voce deve responder uma mensagem com esse comando para apagar. \n\n'
+                              'Se voce nao sabe sobre o que eu estou falando, clique no botão 🏡 Revisitas '
+                              'no teclado abaixo.')

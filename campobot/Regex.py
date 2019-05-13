@@ -22,6 +22,8 @@ PUBS_OFFLINE_REMOVE = r'^(\-\s?\d+\s?((P|p)(ub(lica(ç|c)(.+))?(s)?)?))$'
 RETURNS_COMMAND = r'((R|r)evisita(s)?)'
 RETURNS_OFFLINE_ADD = r'^(\+\s?\d+\s?((R|r)(ev(s)?)?(isit(.*)?)?))$'
 RETURNS_OFFLINE_REMOVE = r'^(\-\s?\d+\s?((R|r)(ev(s)?)?(isit(.*)?)?))$'
+RETURNS_PEOPLE = r'(.{10,})'
+RETURNS_PEOPLE_REMOVE = r'^(((D|d)(elet(\w+)))|((A|a)(pag(u)?(\w+)))|((R|r)(emov)(\w+)|((E|e)(xclu)(\w+))))$'
 
 # Studies
 STUDIES_COMMAND = r'((E|e)stud(\w+))'
