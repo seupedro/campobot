@@ -28,7 +28,7 @@ from reports import report_notification_job, reports_callback, reports_inline, C
     CALLBACK_REPORT_CURRENT_MONTH
 from returns import returns_inline, returns_callback, CALLBACK_RETURNS_ADD_ONE, CALLBACK_RETURNS_ADD_THREE, \
     CALLBACK_RETURNS_REMOVE_ONE, CALLBACK_RETURNS_LIST, CALLBACK_RETURNS_INSTERESTED, returns_offline_add_callback, \
-    returns_offline_remove_callback
+    returns_offline_remove_callback, returns_people_callback, returns_people_remove_callback
 from studies import studies_callback, studies_inline, CALLBACK_STUDIES_ADD_ONE, CALLBACK_STUDIES_ADD_THREE, \
     CALLBACK_STUDIES_REMOVE_ONE, studies_offline_add_callback, studies_offline_remove_callback
 from videos import CALLBACK_VIDEO_ADD_ONE, CALLBACK_VIDEO_ADD_THREE, CALLBACK_VIDEO_REMOVE_ONE, video_callback, \
@@ -65,6 +65,7 @@ def error(bot: Bot, update: Update, error):
 
 
 def startup():
+    print('main called')
 
     msg_queue = mq.MessageQueue(all_burst_limit=28, all_time_limit_ms=1050)
     request = Request(con_pool_size=8)
@@ -126,16 +127,6 @@ def startup():
     dispatcher.add_handler(RegexHandler(callback=studies_offline_remove_callback, pattern=Regex.STUDIES_OFFLINE_REMOVE))
     dispatcher.add_handler(RegexHandler(callback=studies_inline, pattern=str(Regex.START_WITH_EMOJI_SLASH + Regex.STUDIES_COMMAND)))
 
-    # Returns Handler
-    dispatcher.add_handler(CallbackQueryHandler(callback=returns_callback, pattern=CALLBACK_RETURNS_ADD_ONE))
-    dispatcher.add_handler(CallbackQueryHandler(callback=returns_callback, pattern=CALLBACK_RETURNS_ADD_THREE))
-    dispatcher.add_handler(CallbackQueryHandler(callback=returns_callback, pattern=CALLBACK_RETURNS_REMOVE_ONE))
-    dispatcher.add_handler(CallbackQueryHandler(callback=returns_callback, pattern=CALLBACK_RETURNS_LIST))
-    dispatcher.add_handler(CallbackQueryHandler(callback=returns_callback, pattern=CALLBACK_RETURNS_INSTERESTED))
-    dispatcher.add_handler(RegexHandler(callback=returns_offline_add_callback, pattern=Regex.RETURNS_OFFLINE_ADD))
-    dispatcher.add_handler(RegexHandler(callback=returns_offline_remove_callback, pattern=Regex.RETURNS_OFFLINE_REMOVE))
-    dispatcher.add_handler(RegexHandler(callback=returns_inline, pattern=str(Regex.START_WITH_EMOJI_SLASH + Regex.RETURNS_COMMAND)))
-
     # Pubs Handler
     dispatcher.add_handler(CallbackQueryHandler(callback=pubs_callback, pattern=CALLBACK_PUBS_ADD_ONE))
     dispatcher.add_handler(CallbackQueryHandler(callback=pubs_callback, pattern=CALLBACK_PUBS_ADD_THREE))
@@ -162,6 +153,18 @@ def startup():
     dispatcher.add_handler(RegexHandler(callback=callback_offline_add_minutes, pattern=Regex.HOURS_OFFLINE_ADD_MINUTES))
     dispatcher.add_handler(RegexHandler(callback=callback_offline_remove_minutes, pattern=Regex.HOURS_OFFLINE_REMOVE_MINUTES))
     dispatcher.add_handler(RegexHandler(callback=hours_inline, pattern=str(Regex.START_WITH_EMOJI_SLASH + Regex.HOURS_COMMAND)))
+
+    # Returns Handler
+    dispatcher.add_handler(CallbackQueryHandler(callback=returns_callback, pattern=CALLBACK_RETURNS_ADD_ONE))
+    dispatcher.add_handler(CallbackQueryHandler(callback=returns_callback, pattern=CALLBACK_RETURNS_ADD_THREE))
+    dispatcher.add_handler(CallbackQueryHandler(callback=returns_callback, pattern=CALLBACK_RETURNS_REMOVE_ONE))
+    dispatcher.add_handler(CallbackQueryHandler(callback=returns_callback, pattern=CALLBACK_RETURNS_LIST))
+    dispatcher.add_handler(CallbackQueryHandler(callback=returns_callback, pattern=CALLBACK_RETURNS_INSTERESTED))
+    dispatcher.add_handler(RegexHandler(callback=returns_offline_add_callback, pattern=Regex.RETURNS_OFFLINE_ADD))
+    dispatcher.add_handler(RegexHandler(callback=returns_offline_remove_callback, pattern=Regex.RETURNS_OFFLINE_REMOVE))
+    dispatcher.add_handler(RegexHandler(callback=returns_inline, pattern=str(Regex.START_WITH_EMOJI_SLASH + Regex.RETURNS_COMMAND)))
+    dispatcher.add_handler(RegexHandler(callback=returns_people_callback, pattern=Regex.RETURNS_PEOPLE))
+    dispatcher.add_handler(RegexHandler(callback=returns_people_remove_callback, pattern=Regex.RETURNS_PEOPLE_REMOVE))
 
     # Commands Handler
     dispatcher.add_handler(CommandHandler('start', start, pass_user_data=True))
