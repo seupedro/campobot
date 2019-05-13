@@ -2,13 +2,14 @@ from datetime import datetime
 
 from pymongo import MongoClient
 from pymongo.collection import Collection
+from pymongo.cursor import Cursor
 from telegram import Bot, Chat, Message, Update, User
 
 # Type hinting
 profiles_collection: Collection
 reports_collection: Collection
 logs_collection: Collection
-person_collection: Collection
+people_collection: Collection
 
 # User Constants
 USER_LASTNAME = u'user_lastname'
@@ -44,6 +45,7 @@ ADDRESS = u'address'
 RESPONSIBLE_ID = u'responsible_id'
 IS_STUDENT = u'is_student'
 NOTES = u'notes'
+PERSON_INFO = u'person_info'
 
 
 def startup_mongodb():
@@ -240,6 +242,42 @@ def get_pubs_db(update):
             return cursor.get(PUBLICATIONS)
 
 
+def get_person_list_db(update):
+    usr: User = update.effective_user
+
+    if people_collection.count_documents({USER_ID: usr.id}) > 0:
+        cursor: Cursor = people_collection.find({
+            USER_ID: usr.id
+        })
+        return cursor
+    else:
+        return None
+
+
+def save_person_db(update, person_info):
+    usr: User = update.effective_user
+
+    if type(person_info) is not str:
+        raise TypeError('Invalid data type. Expected <str> but found', type(person_info))
+
+    people_collection.insert_one({
+        USER_ID: usr.id,
+        PERSON_INFO: person_info
+    })
+
+
+def remove_person_db(update, person_info):
+    usr: User = update.effective_user
+
+    if type(person_info) is not str:
+        raise TypeError('Invalid data type. Expected <str> but found', type(person_info))
+
+    return people_collection.delete_one({
+        USER_ID: usr.id,
+        PERSON_INFO: person_info
+    }).deleted_count
+
+
 def save_returns_db(update, return_count):
     usr: User = update.effective_user
 
@@ -276,17 +314,6 @@ def get_returns_db(update):
             return 0
         else:
             return cursor.get(RETURNS)
-
-
-def get_returns_list_db(update):
-    usr: User = update.effective_user
-
-    returns_list = list(people_collection.find({
-        RESPONSIBLE_ID: usr.id,
-        IS_STUDENT: False
-    }).sort(NAME))
-
-    return returns_list
 
 
 def save_studies_db(update, studies_count):
